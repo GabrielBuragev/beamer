@@ -3,15 +3,17 @@
     class="hover:underline hover:cursor-pointer translate-x-0 translate-y-0"
     :class="triggerClasses"
     data-test="open-button"
-    @click="openModal"
+    @click.stop="openModal"
     >{{ triggerText }}</span
   >
 
   <div
     v-if="modalIsVisible"
     class="fixed top-0 left-0 w-full h-full z-10 flex justify-center items-center bg-black/40"
+    data-test="backdrop"
   >
     <div
+      v-clickOut="onClickOutAction"
       class="box max-w-5xl max-h-[95vh] flex flex-col overflow-auto p-14 rounded-[1rem] text-left text-light text-base bg-dark"
       data-test="content-box"
     >
@@ -28,14 +30,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+
+import { vClickOut } from '@/directives/vClickOut';
 
 interface Props {
   triggerText: string;
   triggerClasses?: string;
+  closeOnClickOut?: boolean;
 }
 
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  closeOnClickOut: true,
+  triggerClasses: '',
+});
 
 const modalIsVisible = ref(false);
 
@@ -46,6 +54,10 @@ function openModal() {
 function closeModal() {
   modalIsVisible.value = false;
 }
+
+const onClickOutAction = computed(() => {
+  return props.closeOnClickOut ? closeModal : false;
+});
 </script>
 
 <style lang="css">
