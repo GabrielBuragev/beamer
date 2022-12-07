@@ -1,0 +1,121 @@
+{
+  "beamer_commit": "ae00b47c6b1b99acbf77a79e103531f723ee0ca6",
+  "deployer": "0xeDD5273fa20Ca7E1adf3d9D9cC3Bc998Fe3e63A3",
+  "L1": {
+    "Resolver": {
+      "address": "0xC24D09CfBaB52A016dB251495c394F6ee77EB174",
+      "deployment_block": 8093133,
+      "deployment_args": []
+    },
+    "ArbitrumL1Messenger": {
+      "address": "0x910F82e9686e8154199ae6761aE4C87095bD5B1E",
+      "deployment_block": 8093134,
+      "deployment_args": [
+        "0xaf4159A80B6Cc41ED517DB1c453d1Ef5C2e4dB72",
+        "0x6BEbC4925716945D46F0Ec336D5C2564F419682C"
+      ]
+    },
+    "OptimismL1Messenger": {
+      "address": "0x2Dbaa38812B15617dB4A108aD5486CE44b6516C3",
+      "deployment_block": 8093145,
+      "deployment_args": [
+        "0xA6fA0867F39f3A3af7433C8A43f23bf26Efd1a48"
+      ]
+    }
+  },
+  "L2": {
+    "421613": {
+      "MintableToken": {
+        "address": "0x4B9B6a19E7a016d8E55D316380D8093564b0541b",
+        "deployment_block": 2385111,
+        "deployment_args": [
+          1000000000000000000
+        ]
+      },
+      "RequestManager": {
+        "address": "0xdA2c8884751bED4828275c581c6d757d70df5D7F",
+        "deployment_block": 2385115,
+        "deployment_args": [
+          470000000000000,
+          3600,
+          3600,
+          3600
+        ]
+      },
+      "FillManager": {
+        "address": "0x6DeA726562250D83975dA75139d3478BfF1F86Fd",
+        "deployment_block": 2385118,
+        "deployment_args": [
+          "0xf08d71E4b180e1c6EF155C400fC1CDDF6b7425AB"
+        ]
+      },
+      "ArbitrumL2Messenger": {
+        "address": "0xf08d71E4b180e1c6EF155C400fC1CDDF6b7425AB",
+        "deployment_block": 2385114,
+        "deployment_args": []
+      }
+    },
+    "420": {
+      "MintableToken": {
+        "address": "0x5c774747b8C60BaD9A2e650568b8193316D25185",
+        "deployment_block": 3265559,
+        "deployment_args": [
+          1000000000000000000
+        ]
+      },
+      "RequestManager": {
+        "address": "0x7FA961a6fE6D77Eb330e958aa669c8832dE1Df62",
+        "deployment_block": 3265564,
+        "deployment_args": [
+          470000000000000,
+          3600,
+          3600,
+          3600
+        ]
+      },
+      "FillManager": {
+        "address": "0xf08d71E4b180e1c6EF155C400fC1CDDF6b7425AB",
+        "deployment_block": 3265570,
+        "deployment_args": [
+          "0x19719D9533453A7B891C189A805eAAC2415467AE"
+        ]
+      },
+      "OptimismL2Messenger": {
+        "address": "0x19719D9533453A7B891C189A805eAAC2415467AE",
+        "deployment_block": 3265563,
+        "deployment_args": []
+      }
+    },
+    "2888": {
+      "MintableToken": {
+        "address": "0x5c774747b8C60BaD9A2e650568b8193316D25185",
+        "deployment_block": 499,
+        "deployment_args": [
+          1000000000000000000
+        ]
+      },
+      "RequestManager": {
+        "address": "0x7FA961a6fE6D77Eb330e958aa669c8832dE1Df62",
+        "deployment_block": 501,
+        "deployment_args": [
+          470000000000000,
+          3600,
+          3600,
+          3600
+        ]
+      },
+      "FillManager": {
+        "address": "0xf08d71E4b180e1c6EF155C400fC1CDDF6b7425AB",
+        "deployment_block": 504,
+        "deployment_args": [
+          "0x19719D9533453A7B891C189A805eAAC2415467AE"
+        ]
+      },
+      "OptimismL2Messenger": {
+        "address": "0x19719D9533453A7B891C189A805eAAC2415467AE",
+        "deployment_block": 500,
+        "deployment_args": []
+      }
+    }
+  }
+}
