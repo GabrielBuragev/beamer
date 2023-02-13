@@ -29,6 +29,8 @@ from beamer.events import (
     RequestCreated,
     RequestFilled,
     RequestResolved,
+    SourceChainEvent,
+    TargetChainEvent,
 )
 from beamer.l1_resolution import run_relayer_for_tx
 from beamer.models.claim import Claim
@@ -55,7 +57,8 @@ class Context:
     web3_l1: Web3
     task_pool: Executor
     claim_request_extension: int
-    l1_resolutions: dict[tuple[RequestId, ClaimId], Future]
+    l1_resolutions: dict[RequestId, Future]
+    l1_invalidations: dict[ClaimId, Future]
     finality_periods: dict[ChainId, int] = field(default_factory=dict)
 
 
@@ -63,6 +66,11 @@ HandlerResult = tuple[bool, Optional[list[Event]]]
 
 
 def process_event(event: Event, context: Context) -> HandlerResult:
+    if isinstance(event, SourceChainEvent) and event.chain_id != context.source_chain_id:
+        return True, None
+    if isinstance(event, TargetChainEvent) and event.chain_id != context.target_chain_id:
+        return True, None
+
     if isinstance(event, LatestBlockUpdatedEvent):
         return _handle_latest_block_updated(event, context)
 
@@ -438,6 +446,10 @@ def _handle_initiate_l1_resolution(
     if not _timestamp_is_l1_finalized(request.fill_timestamp, context, request.target_chain_id):
         return False, None
 
+    # There is already a process running
+    if request.id in context.l1_resolutions:
+        return True, None
+
     # Check if L1 resolution is cheaper than the winning from challenge
     if _l1_resolution_threshold_reached(claim, context):
         future = context.task_pool.submit(
@@ -455,12 +467,12 @@ def _handle_initiate_l1_resolution(
                 assert request is not None, "Request object missing"
                 assert claim is not None, "Claim object missing"
 
-                del context.l1_resolutions[(request.id, claim.id)]
+                del context.l1_resolutions[request.id]
             except Exception as ex:
                 log.error("L1 resolution failed", ex=ex)
 
         future.add_done_callback(on_future_done)
-        context.l1_resolutions[(request.id, claim.id)] = future
+        context.l1_resolutions[request.id] = future
         request.l1_resolve()
 
         log.info("Initiated L1 resolution", request=request, claim=claim)
@@ -488,6 +500,10 @@ def _handle_initiate_l1_invalidation(
     ):
         return False, None
 
+    # There is already a process running
+    if claim.id in context.l1_invalidations:
+        return True, None
+
     # Check if L1 resolution is cheaper than the winning from challenge
     if _l1_resolution_threshold_reached(claim, context):
         future = context.task_pool.submit(
@@ -505,12 +521,12 @@ def _handle_initiate_l1_invalidation(
                 assert request is not None, "Request object missing"
                 assert claim is not None, "Claim object missing"
 
-                del context.l1_resolutions[(request.id, claim.id)]
+                del context.l1_invalidations[claim.id]
             except Exception as ex:
                 log.error("L1 invalidation failed", ex=ex)
 
         future.add_done_callback(on_future_done)
-        context.l1_resolutions[(request.id, claim.id)] = future
+        context.l1_invalidations[claim.id] = future
         claim.l1_invalidate()
 
         log.info("Initiated L1 invalidation", request=request, claim=claim)
