@@ -1,7 +1,7 @@
 import { hexValue } from 'ethers/lib/utils';
 
-import type { Eip1193Provider } from '@/services/web3-provider';
-import { EthereumProvider } from '@/services/web3-provider';
+import { EthereumProvider } from '@/services/web3-provider/ethereum-provider';
+import type { Eip1193Provider } from '@/services/web3-provider/types';
 import { WalletConnect } from '@/services/web3-provider/util-export';
 
 export async function createWalletConnectProvider(rpcList: {
@@ -9,12 +9,14 @@ export async function createWalletConnectProvider(rpcList: {
 }): Promise<WalletConnectProvider | undefined> {
   const provider = new WalletConnect({
     rpc: rpcList,
-  }) as Eip1193Provider & typeof WalletConnect;
+  }) as typeof WalletConnect;
 
   await provider.enable();
 
   if (provider.connected) {
-    const walletConnectProvider = new WalletConnectProvider(provider);
+    const walletConnectProvider = new WalletConnectProvider(
+      provider as unknown as Eip1193Provider,
+    );
     await walletConnectProvider.init();
     return walletConnectProvider;
   }

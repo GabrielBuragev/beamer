@@ -25,7 +25,8 @@
           </div>
           <img
             v-else
-            class="h-16 w-16"
+            class="w-16 h-16"
+            :class="walletOption.classes"
             :src="walletOption.icon"
             :alt="walletOption.name + ' icon'"
           />
@@ -62,8 +63,14 @@ import { isMobile } from '@/utils/userAgent';
 const { provider, signer } = storeToRefs(useEthereumProvider());
 const { rpcUrls } = storeToRefs(useConfiguration());
 const { connectedWallet } = storeToRefs(useSettings());
-const { connectMetaMask, connectWalletConnect, connectingMetaMask, connectingWalletConnect } =
-  useWallet(provider, connectedWallet, rpcUrls);
+const {
+  connectMetaMask,
+  connectWalletConnect,
+  connectingMetaMask,
+  connectingWalletConnect,
+  connectCoinbase,
+  connectingCoinbase,
+} = useWallet(provider, connectedWallet, rpcUrls);
 
 const walletOptions = ref([
   {
@@ -72,6 +79,7 @@ const walletOptions = ref([
     description: 'Connect using browser wallet',
     connect: () => connectMetaMask(true),
     connecting: connectingMetaMask,
+    hasMobileFlow: false,
   },
   {
     name: 'WalletConnect',
@@ -79,20 +87,30 @@ const walletOptions = ref([
     description: 'Connect using mobile wallet',
     connect: connectWalletConnect,
     connecting: connectingWalletConnect,
+    hasMobileFlow: true,
+  },
+  {
+    name: 'Coinbase',
+    icon: new URL('../assets/images/coinbase_wallet.png', import.meta.url).href,
+    classes: 'p-3',
+    description: 'Connect using coinbase wallet',
+    connect: connectCoinbase,
+    connecting: connectingCoinbase,
+    hasMobileFlow: true,
   },
 ]);
 
 onMounted(() => {
-  // Use stripped down option list for mobile devices
   if (isMobile(window.navigator.userAgent)) {
     const metaMaskAvailable = window.ethereum && window.ethereum.isMetaMask;
+    const coinbaseAvailable = window.ethereum && window.ethereum.isCoinbaseWallet;
 
     if (metaMaskAvailable) {
       walletOptions.value = walletOptions.value.filter((option) => option.name === 'MetaMask');
+    } else if (coinbaseAvailable) {
+      walletOptions.value = walletOptions.value.filter((option) => option.name === 'Coinbase');
     } else {
-      walletOptions.value = walletOptions.value.filter(
-        (option) => option.name === 'WalletConnect',
-      );
+      walletOptions.value = walletOptions.value.filter((option) => option.hasMobileFlow);
     }
   }
 });
